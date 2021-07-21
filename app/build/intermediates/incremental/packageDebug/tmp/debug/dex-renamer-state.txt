@@ -1,4 +1,4 @@
-#Fri Jul 31 06:21:45 MSK 2020
-base.0=C\:\\Users\\nasty\\AndroidStudioProjects\\LynxMedia\\WeatherApplication\\app\\build\\intermediates\\dex\\debug\\out\\classes.dex
+#Fri Jul 31 06:25:49 MSK 2020
+base.0=C\:\\Users\\nasty\\AndroidStudioProjects\\WeatherApplication\\app\\build\\intermediates\\dex\\debug\\out\\classes.dex
 path.0=classes.dex
 renamed.0=classes.dex

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/WeatherApplication.iml" filepath="$PROJECT_DIR$/WeatherApplication.iml" group="WeatherApplication" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="WeatherApplication/app" />
-      <module fileurl="file://$PROJECT_DIR$/weatherlibrary/weatherlibrary.iml" filepath="$PROJECT_DIR$/weatherlibrary/weatherlibrary.iml" group="WeatherApplication/weatherlibrary" />
+      <module fileurl="file://$PROJECT_DIR$/WeatherApplication.iml" filepath="$PROJECT_DIR$/WeatherApplication.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/WeatherApplication.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/WeatherApplication.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/weatherlibrary/WeatherApplication.weatherlibrary.iml" filepath="$PROJECT_DIR$/.idea/modules/weatherlibrary/WeatherApplication.weatherlibrary.iml" />
     </modules>
   </component>
 </project>

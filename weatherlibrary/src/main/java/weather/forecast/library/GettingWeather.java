@@ -2,12 +2,20 @@ package weather.forecast.library;
 
 import java.util.List;
 
+import io.reactivex.Single;
+import io.reactivex.SingleSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import weather.forecast.library.pojo.CityInfo;
 import weather.forecast.library.pojo.ConsolidatedWeather;
@@ -35,11 +43,12 @@ public class GettingWeather {
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(baseURL)
                     .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .client(client)
                     .build();
 
             metaWeatherApi = retrofit.create(MetaWeatherApi.class);
-            Call<List<CityInfo>> callCityInfo = metaWeatherApi.getCityId(location);
+            Single<List<CityInfo>> callCityInfo = metaWeatherApi.getCityId(location);
             getId(callCityInfo);
         }
         catch (Exception ex){
@@ -47,7 +56,46 @@ public class GettingWeather {
         }
     }
 
-    void getId(final Call<List<CityInfo>> callCityInfo){
+    void getId(final Single<List<CityInfo>> callCityInfo){
+
+         callCityInfo
+                 .flatMap(new Function<List<CityInfo>, SingleSource<Forecast>>() { // на io
+                     @Override
+                     public SingleSource<Forecast> apply(@NonNull List<CityInfo> cityInfos)  {
+                         CityInfo cityInfo = cityInfos.get(0);
+                         int id = cityInfo.getWoeid();
+                         return metaWeatherApi.getWeather(id);
+
+                     }
+                 })
+                 .map(new Function<Forecast, String>() { // на io
+                     @Override
+                     public String apply(@NonNull Forecast forecast) throws Exception {
+                         ConsolidatedWeather consolidatedWeather = forecast.getConsolidatedWeather().get(0);
+                         return "Weather state: " + consolidatedWeather.getWeatherStateName() + "\n"
+                                 + "Temp: " + consolidatedWeather.getTheTemp() + "\n"
+                                 + "Wind direction: " + consolidatedWeather.getWindDirectionCompass() + "\n"
+                                 + "Wind speed: " + consolidatedWeather.getWindSpeed() + "\n"
+                                 + "Air pressure: " + consolidatedWeather.getAirPressure() + "\n"
+                                 + "Humidity: " + consolidatedWeather.getHumidity();
+                     }
+                 })
+                 .subscribeOn(Schedulers.io())
+                 .observeOn(AndroidSchedulers.mainThread())
+                 .subscribe(new Consumer<String>() { // на ui
+                     @Override
+                     public void accept(String s) throws Exception {
+                         uiListener.onDataAvailable(result);
+                         LogClass.log("result:" + result);
+                     }
+                 }, new Consumer<Throwable>() {
+                     @Override
+                     public void accept(Throwable throwable) throws Exception {
+                         uiListener.onDataAvailable(error);
+                         LogClass.log("getting weather error:" + throwable.getLocalizedMessage());
+                     }
+                 });
+
 
 
              callCityInfo.enqueue(new Callback<List<CityInfo>>() {

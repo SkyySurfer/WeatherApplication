@@ -4,6 +4,7 @@ package weather.forecast.library;
 import java.util.List;
 
 
+import io.reactivex.Single;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -13,9 +14,9 @@ import weather.forecast.library.pojo.Forecast;
 
 public interface MetaWeatherApi {
     @GET("search?")
-    Call<List<CityInfo>> getCityId(@Query("query") String location);
+    Single<List<CityInfo>> getCityId(@Query("query") String location);
 
     @GET("{id}")
-    Call<Forecast> getWeather(@Path("id") int id);
+    Single<Forecast> getWeather(@Path("id") int id);
 
 }
